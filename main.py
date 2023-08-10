@@ -12,6 +12,7 @@ colors = {
     "YELLOW": "\033[1;33;40m",
     "BLUE": "\033[1;34;40m",
     "WHITE": "\033[1;37;40m",
+    "GREEN": "\033[1;32;40m",
     "GREEN_BG_BLACK_FG": "\033[0;37;42m",
     "RED_BG_BLACK_FG": "\033[0;37;41m",
 }
@@ -32,7 +33,6 @@ def get_questions(amount: int) -> list:
 
 
 def serve_questions(questions: list):
-    exit = False
     global correct, wrong
     for question in questions:
         category = question["category"]
@@ -43,49 +43,44 @@ def serve_questions(questions: list):
             html.unescape(q)
             for q in question["incorrect_answers"] + [question["correct_answer"]]
         ]
+        correct_answer = question["correct_answer"]
         answers_insensitive = [i.lower() for i in answers]
-        correct_answer_insensitive = question["correct_answer"].lower()
+        correct_answer_insensitive = correct_answer.lower()
 
         random.shuffle(answers)
 
         print(colors["YELLOW"] + f"Category: {category}" + colors["RESET"])
         print(colors["YELLOW"] + f"Difficulty: {difficulty}\n" + colors["RESET"])
-        print(
-            colors["GREEN_BG_BLACK_FG"]
-            + f"{html.unescape(question_text)}"
-            + colors["RESET"]
-        )
+        print(colors["GREEN"] + f"{html.unescape(question_text)}" + colors["RESET"])
         print(
             colors["BLUE"] + f"Answer choices: {', '.join(answers)}\n" + colors["RESET"]
         )
 
         while True:
-            user_input = input(colors["WHITE"] + "Answer: ").lower()
+            try:
+                user_input = int(
+                    input(colors["WHITE"] + "Answer index: " + colors["RESET"])
+                )
+                user_answer = answers_insensitive[user_input]
+            except ValueError:
+                print("Please enter an integer!")
+                continue
+            except IndexError:
+                print("Please enter a valid python index (starts at 0)!")
+                continue
 
-            if user_input == "exit":
-                print(
-                    colors["RED_BG_BLACK_FG"]
-                    + "Exiting the program..."
-                    + colors["RESET"]
-                )
-                exit = True
-            elif user_input not in answers_insensitive:
-                print(
-                    colors["RED_BG_BLACK_FG"]
-                    + "Please enter a valid answer!"
-                    + colors["RESET"]
-                )
-            elif user_input == correct_answer_insensitive:
-                print(colors["GREEN_BG_BLACK_FG"] + "Correct!" + colors["RESET"])
+            if user_answer == correct_answer_insensitive:
+                print(colors["GREEN_BG_BLACK_FG"] + "\nCorrect!\n" + colors["RESET"])
                 correct += 1
                 break
             else:
-                print(colors["RED_BG_BLACK_FG"] + "Incorrect!" + colors["RESET"])
+                print(
+                    colors["RED_BG_BLACK_FG"]
+                    + f"\nIncorrect! The correct answer is {correct_answer}\n"
+                    + colors["RESET"]
+                )
                 wrong += 1
                 break
-
-        if exit:
-            break
 
 
 while True:
@@ -101,9 +96,10 @@ while True:
 
     print(
         colors["BLUE"]
-        + f"Congratulations you have solved {questions_amount} question(s) with {correct} correct answer(s) and {wrong} wrong answer(s)!"
+        + f"Game finished!\nYou have solved {questions_amount} question(s) with {correct} correct answer(s) and {wrong} wrong answer(s)."
         + colors["RESET"]
     )
 
-    if input(colors["WHITE"] + "Play again? (y/n): " + colors["RESET"]) == "y":
+    if input(colors["WHITE"] + "Play again? (y/n): " + colors["RESET"]) == "n":
+        print("Exiting the program...")
         break
