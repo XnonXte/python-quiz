@@ -100,6 +100,9 @@ while True:
         + colors["RESET"]
     )
 
-    if input(colors["WHITE"] + "Play again? (y/n): " + colors["RESET"]) == "n":
+    if (
+        not input(colors["WHITE"] + "Play again? (y/n): " + colors["RESET"]).lower()
+        == "y"
+    ):
         print("Exiting the program...")
         break
