@@ -44,8 +44,6 @@ def serve_questions(questions: list):
             for q in question["incorrect_answers"] + [question["correct_answer"]]
         ]
         correct_answer = question["correct_answer"]
-        answers_insensitive = [i.lower() for i in answers]
-        correct_answer_insensitive = correct_answer.lower()
 
         random.shuffle(answers)
 
@@ -61,7 +59,7 @@ def serve_questions(questions: list):
                 user_input = int(
                     input(colors["WHITE"] + "Answer index: " + colors["RESET"])
                 )
-                user_answer = answers_insensitive[user_input]
+                user_answer = answers[user_input].lower()
             except ValueError:
                 print("Please enter an integer!")
                 continue
@@ -69,7 +67,7 @@ def serve_questions(questions: list):
                 print("Please enter a valid python index (starts at 0)!")
                 continue
 
-            if user_answer == correct_answer_insensitive:
+            if user_answer == correct_answer.lower():
                 print(colors["GREEN_BG_BLACK_FG"] + "\nCorrect!\n" + colors["RESET"])
                 correct += 1
                 break
