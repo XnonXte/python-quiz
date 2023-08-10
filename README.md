@@ -1,4 +1,4 @@
-# Python Quizz Game
+# Python Quiz Game
 
 ![mockup image](mockup.png)
 
